@@ -1,6 +1,5 @@
 <div class="home-container">
-    <p>Brugere online: {{usersOnline}}</p>
-    <form [formGroup]="fg" (ngSubmit)="onNameSubmit()">
+    <form [formGroup]="fg" (ngSubmit)="onNameSubmit()" class="home-input-container">
         <p>Indtast navn</p>
         <input type="text" [formControl]="usernameCon"/>
         <button type="submit">Tilslut</button>

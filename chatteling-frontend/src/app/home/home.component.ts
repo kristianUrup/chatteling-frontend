@@ -9,8 +9,6 @@ import { catchError} from "rxjs/operators";
   styleUrls: ['./home.component.scss']
 })
 export class HomeComponent implements OnInit {
-
-  public usersOnline: number = 0;
   public fg: FormGroup;
   constructor(private fb: FormBuilder, private userService: UserService) { 
     this.fg = this.fb.group({
@@ -19,7 +17,6 @@ export class HomeComponent implements OnInit {
   }
 
   ngOnInit(): void {
-
   }
 
   get usernameCon(): FormControl {
