@@ -1,0 +1,33 @@
+:host {
+    flex: 1;
+}
+.chatroom-screen {
+    width: 100%;
+    height: 100%;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    .chatroom-container {
+        width: 500px;
+        height: 500px;
+        .chatroom-messages-container {
+            width: 100%;
+            height: 95%;
+            border: 1px solid gray;
+            border-radius: 5px;
+            overflow: auto;
+        }
+        .chatroom-message-input-container {
+            padding-top: 2px;
+            width: 100%;
+            height: 5%;
+            display: flex;
+            input {
+                &:focus {
+                    border: none;
+                }
+                flex: 1;
+            }
+        }
+    }
+}
