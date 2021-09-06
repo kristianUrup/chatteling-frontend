@@ -17,7 +17,7 @@ export class UserService {
   }
 
   getLiveUsers(): Observable<number> {
-    return this.socket.fromEvent<number>('active-users').pipe(
+    return this.socket.fromEvent<number>('active-users-count').pipe(
       tap((x) => {
         console.log(x);
       })

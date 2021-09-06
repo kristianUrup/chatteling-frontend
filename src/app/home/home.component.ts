@@ -6,6 +6,7 @@ import {
   Validators,
 } from '@angular/forms';
 import { UserService } from '../services/user.service';
+import { Router } from '@angular/router';
 import { catchError } from 'rxjs/operators';
 
 @Component({
@@ -15,7 +16,7 @@ import { catchError } from 'rxjs/operators';
 })
 export class HomeComponent {
   public fg: FormGroup;
-  constructor(private fb: FormBuilder, private userService: UserService) {
+  constructor(private fb: FormBuilder, private userService: UserService, private router: Router) {
     this.fg = this.fb.group({
       userName: ['', [Validators.required]],
     });
@@ -38,6 +39,7 @@ export class HomeComponent {
       )
       .subscribe(() => {
         console.log('You have now entered chatroom');
+        this.router.navigate(['/chat']);
       });
   }
 }
