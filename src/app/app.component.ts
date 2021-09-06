@@ -11,7 +11,7 @@ export class AppComponent implements OnInit {
   public usersOnline = 0;
   constructor(private userService: UserService) {}
   ngOnInit(): void {
-    this.userService.getLiveUsers().subscribe((response) => {
+    this.userService.getLiveUsersCount().subscribe((response) => {
       this.usersOnline = response;
     });
   }

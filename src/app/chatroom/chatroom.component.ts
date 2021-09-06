@@ -1,10 +1,8 @@
-import {AfterViewInit, Component, OnInit} from '@angular/core';
 import {FormBuilder, FormControl, FormGroup, Validators} from "@angular/forms";
 import {UserService} from "../services/user.service";
-import {Observable} from "rxjs";
 import {Message} from "../models/ChatroomMessage";
-import {take} from "rxjs/operators";
-import {THIS_EXPR} from "@angular/compiler/src/output/output_ast";
+import { Component, OnInit } from '@angular/core';
+import { User } from '../models/User';
 
 @Component({
   selector: 'app-chatroom',
@@ -12,7 +10,7 @@ import {THIS_EXPR} from "@angular/compiler/src/output/output_ast";
   styleUrls: ['./chatroom.component.scss']
 })
 export class ChatroomComponent implements OnInit {
-
+  public users: User[];
   public fg: FormGroup;
   public chatroomMessages: Message[] = [];
 
@@ -20,9 +18,12 @@ export class ChatroomComponent implements OnInit {
     return this.fg.get('message') as FormControl;
   };
   constructor(private fb: FormBuilder, private userService: UserService) {
+    this.users = [];
     this.fg = this.fb.group({
-    message: ['', [Validators.required]],
-  }); }
+      message: ['', [Validators.required]],
+    });
+  }
+
 
   ngOnInit(): void {
     this.userService.enterChatroom('me').subscribe(value => console.log('entered chatroom'));
@@ -35,7 +36,16 @@ export class ChatroomComponent implements OnInit {
       this.chatroomMessages.push(value);
     });
     console.log(this.chatroomMessages);
+
+    this.userService.getLiveUsers()
+      .subscribe((users) => {
+        this.users = users;
+        console.log("got users");
+        console.log(users)
+      });
+    console.log("I was here");
   }
+
 
   onMessageSubmit() : void {
     if(this.fg.invalid) {
