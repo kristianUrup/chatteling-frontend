@@ -39,6 +39,9 @@ export class HomeComponent {
       )
       .subscribe(() => {
         console.log('You have now entered chatroom');
+        this.userService.saveUserLocally({ 
+          username: this.fg.get('userName')?.value
+        });
         this.router.navigate(['/chat']);
       });
   }

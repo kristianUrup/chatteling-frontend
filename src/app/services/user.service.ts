@@ -21,8 +21,10 @@ export class UserService {
     []
   );
   private messages$: Observable<Message[]> = this.messagesBehaviour.asObservable();
+  private userBehavior: BehaviorSubject<User | null> = new BehaviorSubject<User | null>(null);
   private count$: Observable<number> = this.countBehavior.asObservable();
   private users$: Observable<User[]> = this.usersBehavior.asObservable();
+  private user$: Observable<User | null> = this.userBehavior.asObservable();
   constructor(private client: HttpClient, private socket: Socket) {}
 
   enterChatroom(userName: string): Observable<any> {
@@ -79,5 +81,13 @@ export class UserService {
       from: username,
       content: message
     })
+  }
+  saveUserLocally(user: User) {
+    this.userBehavior.next(user);
+    console.log(user);
+  }
+
+  getLocalUser() : Observable<User | null> {
+    return this.user$;
   }
 }
