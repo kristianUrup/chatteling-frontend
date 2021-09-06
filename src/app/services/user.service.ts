@@ -13,11 +13,11 @@ export class UserService {
   constructor(private client: HttpClient, private socket: Socket) {}
 
   enterChatroom(userName: string): Observable<any> {
-    return this.client.post(this.BASE_URL, { userName });
+    return this.client.post(this.BASE_URL, { username: userName });
   }
 
   getLiveUsers(): Observable<number> {
-    return this.socket.fromEvent<number>('users-online').pipe(
+    return this.socket.fromEvent<number>('active-users').pipe(
       tap((x) => {
         console.log(x);
       })
