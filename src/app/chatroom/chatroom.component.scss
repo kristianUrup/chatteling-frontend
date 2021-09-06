@@ -7,6 +7,12 @@
     display: flex;
     justify-content: center;
     align-items: center;
+    flex-direction: row;
+    .chatroom-users-list-container {
+        height: 500px;
+        width: 200px;
+        background-color: gray;
+    }
     .chatroom-container {
         width: 500px;
         height: 500px;
