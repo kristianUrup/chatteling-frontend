@@ -13,6 +13,9 @@ export class ChatroomComponent implements OnInit {
   public users: User[];
   public fg: FormGroup;
   public chatroomMessages: Message[] = [];
+  public currentUser: User = {
+    username : "me"
+  };
 
   get messageCon(): FormControl {
     return this.fg.get('message') as FormControl;
@@ -30,10 +33,6 @@ export class ChatroomComponent implements OnInit {
     this.userService.getAllMessages().subscribe(value => {
       console.log(value);
       this.chatroomMessages = value;
-    });
-    this.userService.getNewMessages().subscribe(value => {
-      console.log(value);
-      this.chatroomMessages.push(value);
     });
     console.log(this.chatroomMessages);
 

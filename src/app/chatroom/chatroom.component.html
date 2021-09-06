@@ -3,6 +3,9 @@
     </div>
     <div class="chatroom-container">
         <div class="chatroom-messages-container">
+          <app-message [msg]="msg" *ngFor="let msg of chatroomMessages" [currentUser]="currentUser">
+
+          </app-message>
         </div>
         <form [formGroup]="fg" (ngSubmit)="onMessageSubmit()" class="chatroom-message-input-container">
             <input type="text" [formControl]="messageCon"/>

@@ -9,21 +9,28 @@ import { User } from '../models/User';
   providedIn: 'root',
 })
 export class UserService {
-  private readonly BASE_URL: string = 'http://localhost:5000/users';
+  private readonly BASE_URL: string = 'http://localhost:5000';
+  private readonly USER_URL: string = this.BASE_URL + '/users';
+  private readonly MESSAGE_URL: string = this.BASE_URL + '/messages';
+
   private countBehavior: BehaviorSubject<number> = new BehaviorSubject(0);
   private usersBehavior: BehaviorSubject<User[]> = new BehaviorSubject<User[]>(
     []
   );
+  private messagesBehaviour: BehaviorSubject<Message[]> = new BehaviorSubject<Message[]>(
+    []
+  );
+  private messages$: Observable<Message[]> = this.messagesBehaviour.asObservable();
   private count$: Observable<number> = this.countBehavior.asObservable();
   private users$: Observable<User[]> = this.usersBehavior.asObservable();
   constructor(private client: HttpClient, private socket: Socket) {}
 
   enterChatroom(userName: string): Observable<any> {
-    return this.client.post(this.BASE_URL, { username: userName });
+    return this.client.post(this.USER_URL, { username: userName });
   }
 
   public getUsersCount(): Observable<number> {
-    this.client.get<number>(this.BASE_URL + '/count').subscribe((count) => {
+    this.client.get<number>(this.USER_URL + '/count').subscribe((count) => {
       this.countBehavior.next(count);
     });
     this.socket.fromEvent<number>('active-users-count').subscribe((count) => {
@@ -33,7 +40,7 @@ export class UserService {
   }
 
   public getUsers(): Observable<User[]> {
-    this.client.get<User[]>(this.BASE_URL).subscribe((users) => {
+    this.client.get<User[]>(this.USER_URL).subscribe((users) => {
       this.usersBehavior.next(users);
     });
     this.socket.fromEvent<User>('active-users-new').subscribe((user) => {
@@ -41,6 +48,22 @@ export class UserService {
       this.usersBehavior.next([...users, user]);
     });
     return this.users$;
+  }
+
+  getAllMessages() : Observable<Message[]> {
+    this.client.get<Message[]>(this.MESSAGE_URL).subscribe((messages) => {
+      for (let msg of messages) {
+        msg.sentAt = new Date(msg.sentAt);
+      }
+      //this.messagesBehaviour.next(messages);
+      this.messagesBehaviour.next(messages.sort((a,b) => a.sentAt.getTime() - b.sentAt.getTime()));
+    });
+    this.socket.fromEvent<Message>('messages-new').subscribe((message =>  {
+      const messages = this.messagesBehaviour.value;
+      message.sentAt = new Date(message.sentAt);
+      this.messagesBehaviour.next([...messages, message].sort((a,b) => a.sentAt.getTime() - b.sentAt.getTime()));
+    }));
+    return this.messages$;
   }
 
   getLiveUsersCount(): Observable<number> {
@@ -56,13 +79,5 @@ export class UserService {
       from: username,
       content: message
     })
-  }
-
-  getNewMessages() : Observable<Message> {
-    return this.socket.fromEvent<Message>('messages-new');
-  }
-
-  getAllMessages() : Observable<Message[]> {
-    return this.socket.fromEvent<Message[]>('messages-all');
   }
 }
