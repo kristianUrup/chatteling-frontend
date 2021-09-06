@@ -32,11 +32,13 @@
             width: 100%;
             height: 95%;
             border: 1px solid gray;
+            box-sizing: border-box;
+            -moz-box-sizing: border-box;
+            -webkit-box-sizing: border-box;
             border-radius: 5px;
             overflow: auto;
         }
         .chatroom-message-input-container {
-            padding-top: 2px;
             width: 100%;
             height: 5%;
             display: flex;
