@@ -2,6 +2,7 @@ import { HttpClient } from '@angular/common/http';
 import { Injectable } from '@angular/core';
 import { BehaviorSubject, Observable } from 'rxjs';
 import { Socket } from 'ngx-socket-io';
+import {Message} from "../models/ChatroomMessage";
 import { User } from '../models/User';
 
 @Injectable({
@@ -48,5 +49,20 @@ export class UserService {
 
   getLiveUsers(): Observable<User[]> {
     return this.getUsers();
+  }
+
+  sendMessage(message : string, username: string) : void {
+    this.socket.emit('sendMessage', {
+      from: username,
+      content: message
+    })
+  }
+
+  getNewMessages() : Observable<Message> {
+    return this.socket.fromEvent<Message>('messages-new');
+  }
+
+  getAllMessages() : Observable<Message[]> {
+    return this.socket.fromEvent<Message[]>('messages-all');
   }
 }
