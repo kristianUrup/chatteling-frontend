@@ -1,11 +1,10 @@
 <div class="chatroom-screen">
     <div class="chatroom-container">
         <div class="chatroom-messages-container">
-    
         </div>
-        <div class="chatroom-message-input-container">
-            <input type="text" />
-            <button>Send</button>        
-        </div>
+        <form [formGroup]="fg" (ngSubmit)="onMessageSubmit()" class="chatroom-message-input-container">
+            <input type="text" [formControl]="messageCon"/>
+            <button type="submit">Send</button>
+        </form>
     </div>
 </div>

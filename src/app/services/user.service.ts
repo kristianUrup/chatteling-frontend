@@ -3,6 +3,7 @@ import { Injectable } from '@angular/core';
 import { Observable } from 'rxjs';
 import { Socket } from 'ngx-socket-io';
 import { tap } from 'rxjs/operators';
+import {Message} from "../models/ChatroomMessage";
 
 @Injectable({
   providedIn: 'root',
@@ -17,10 +18,27 @@ export class UserService {
   }
 
   getLiveUsers(): Observable<number> {
-    return this.socket.fromEvent<number>('active-users').pipe(
+    return this.socket.fromEvent<number>('active-users-count').pipe(
       tap((x) => {
         console.log(x);
       })
     );
   }
+
+  sendMessage(message : string, username: string) : void {
+    this.socket.emit('sendMessage', {
+      from: username,
+      content: message
+    })
+  }
+
+  getNewMessages() : Observable<Message> {
+    return this.socket.fromEvent<Message>('messages-new');
+  }
+
+  getAllMessages() : Observable<Message[]> {
+    return this.socket.fromEvent<Message[]>('messages-all');
+  }
+
+
 }
