@@ -11,6 +11,7 @@ import { User } from '../models/User';
 })
 export class ChatroomComponent implements OnInit {
   public users: User[];
+  public currentUser: User | null;
   public fg: FormGroup;
   public chatroomMessages: Message[] = [];
 
@@ -19,6 +20,7 @@ export class ChatroomComponent implements OnInit {
   };
   constructor(private fb: FormBuilder, private userService: UserService) {
     this.users = [];
+    this.currentUser = null;
     this.fg = this.fb.group({
       message: ['', [Validators.required]],
     });
@@ -42,6 +44,12 @@ export class ChatroomComponent implements OnInit {
         this.users = users;
         console.log(this.users)
       });
+      this.userService.getLocalUser()
+      .subscribe((user) => {
+        this.currentUser = user;
+        console.log(user);
+        console.log(this.currentUser);
+      })
     console.log("I was here");
   }
 
