@@ -1,5 +1,8 @@
 <div class="chatroom-screen">
     <div class="chatroom-users-list-container">
+        <div class="chatroom-users-list" *ngFor="let user of users">
+            <span class="chatroom-users-list-item">{{user.username}}</span>
+        </div>
     </div>
     <div class="chatroom-container">
         <div class="chatroom-messages-container">
@@ -10,4 +13,5 @@
             <button>Send</button>        
         </div>
     </div>
+    <div class="chatroom-users-list-container invisible"></div>
 </div>
