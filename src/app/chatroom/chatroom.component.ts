@@ -11,19 +11,16 @@ import { User } from '../models/User';
 })
 export class ChatroomComponent implements OnInit {
   public users: User[];
-  public currentUser: User | null;
+  public currentUser: User | undefined;
   public fg: FormGroup;
   public chatroomMessages: Message[] = [];
-  public currentUser: User = {
-    username : "me"
-  };
 
   get messageCon(): FormControl {
     return this.fg.get('message') as FormControl;
   };
   constructor(private fb: FormBuilder, private userService: UserService) {
     this.users = [];
-    this.currentUser = null;
+    this.currentUser = undefined;
     this.fg = this.fb.group({
       message: ['', [Validators.required]],
     });
