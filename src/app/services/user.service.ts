@@ -20,11 +20,16 @@ export class UserService {
   private messagesBehaviour: BehaviorSubject<Message[]> = new BehaviorSubject<Message[]>(
     []
   );
+  private typingUsersBehaviour: BehaviorSubject<string[]> = new BehaviorSubject<string[]>(
+    []
+  );
+
   private messages$: Observable<Message[]> = this.messagesBehaviour.asObservable();
-  private userBehavior: BehaviorSubject<User | null> = new BehaviorSubject<User | null>(null);
+  private userBehavior: BehaviorSubject<User | undefined> = new BehaviorSubject<User | undefined>(undefined);
   private count$: Observable<number> = this.countBehavior.asObservable();
   private users$: Observable<User[]> = this.usersBehavior.asObservable();
-  private user$: Observable<User | null> = this.userBehavior.asObservable();
+  private user$: Observable<User | undefined> = this.userBehavior.asObservable();
+  private typingusers$: Observable<string[]> = this.typingUsersBehaviour.asObservable();
   constructor(private client: HttpClient, private socket: Socket) {}
 
   enterChatroom(userName: string): Observable<any> {
@@ -47,7 +52,8 @@ export class UserService {
     });
     this.socket.fromEvent<User>('active-users-new').subscribe((user) => {
       const users = this.usersBehavior.value;
-      this.usersBehavior.next([...users, user]);
+      users.push(user);
+      this.usersBehavior.next(users);
     });
     return this.users$;
   }
@@ -57,7 +63,6 @@ export class UserService {
       for (let msg of messages) {
         msg.sentAt = new Date(msg.sentAt);
       }
-      //this.messagesBehaviour.next(messages);
       this.messagesBehaviour.next(messages.sort((a,b) => a.sentAt.getTime() - b.sentAt.getTime()));
     });
     this.socket.fromEvent<Message>('messages-new').subscribe((message =>  {
@@ -66,6 +71,36 @@ export class UserService {
       this.messagesBehaviour.next([...messages, message].sort((a,b) => a.sentAt.getTime() - b.sentAt.getTime()));
     }));
     return this.messages$;
+  }
+
+  EmitStartedTyping(username : string) : void {
+    this.socket.emit('user-typing-client', username);
+  }
+
+  GetTypingList() : Observable<string[]> {
+    this.socket.fromEvent<string>('user-typing-server').subscribe((typingUser) => {
+      if(typingUser === this.userBehavior.value?.username) {
+        return;
+      }
+      const typingUsers = this.typingUsersBehaviour.value;
+      const exists = typingUsers.some(value => value === typingUser);
+      if(!exists) {
+        this.typingUsersBehaviour.next([...typingUsers, typingUser]);
+      }
+    });
+    this.socket.fromEvent<string>('user-drop-typing-server').subscribe((typingUser) => {
+      if(typingUser === this.userBehavior.value?.username) {
+        return;
+      }
+      const typingUsers = this.typingUsersBehaviour.value;
+      const temp = typingUsers.filter(value => value != typingUser);
+      this.typingUsersBehaviour.next(temp);
+    });
+    return this.typingusers$;
+  }
+
+  EmitStoppedTyping(username : string) : void {
+    this.socket.emit('user-drop-typing-client', username);
   }
 
   getLiveUsersCount(): Observable<number> {
@@ -86,8 +121,7 @@ export class UserService {
     this.userBehavior.next(user);
     console.log(user);
   }
-
-  getLocalUser() : Observable<User | null> {
+  getLocalUser() : Observable<User | undefined> {
     return this.user$;
   }
 }

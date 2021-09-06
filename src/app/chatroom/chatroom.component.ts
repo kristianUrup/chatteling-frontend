@@ -13,9 +13,8 @@ export class ChatroomComponent implements OnInit {
   public users: User[];
   public fg: FormGroup;
   public chatroomMessages: Message[] = [];
-  public currentUser: User = {
-    username : "me"
-  };
+  public typingList: string[] = [];
+  public currentUser: User | undefined;
 
   get messageCon(): FormControl {
     return this.fg.get('message') as FormControl;
@@ -27,9 +26,10 @@ export class ChatroomComponent implements OnInit {
     });
   }
 
-
   ngOnInit(): void {
-    this.userService.enterChatroom('me').subscribe(value => console.log('entered chatroom'));
+    this.userService.getLocalUser().subscribe(value => {
+      this.currentUser = value;
+    })
     this.userService.getAllMessages().subscribe(value => {
       console.log(value);
       this.chatroomMessages = value;
@@ -42,8 +42,25 @@ export class ChatroomComponent implements OnInit {
         console.log(this.users)
       });
     console.log("I was here");
-  }
 
+    this.messageCon.valueChanges.subscribe(value => {
+      if(!this.currentUser) {
+        return;
+      }
+      console.log(value);
+      if(!value) {
+        console.log("stopped typing");
+        this.userService.EmitStoppedTyping(this.currentUser.username);
+      } else {
+        console.log("started typing");
+        this.userService.EmitStartedTyping(this.currentUser.username);
+      }
+    });
+    this.userService.GetTypingList().subscribe(value => {
+      console.log(value)
+      this.typingList = value;
+    });
+  }
 
   onMessageSubmit() : void {
     if(this.fg.invalid) {
