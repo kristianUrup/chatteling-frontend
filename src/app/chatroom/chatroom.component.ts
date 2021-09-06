@@ -40,8 +40,7 @@ export class ChatroomComponent implements OnInit {
     this.userService.getLiveUsers()
       .subscribe((users) => {
         this.users = users;
-        console.log("got users");
-        console.log(users)
+        console.log(this.users)
       });
     console.log("I was here");
   }

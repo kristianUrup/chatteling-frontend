@@ -1,7 +1,9 @@
 <div class="chatroom-screen">
     <div class="chatroom-users-list-container">
-        <div class="chatroom-users-list" *ngFor="let user of users">
-            <span class="chatroom-users-list-item">{{user.username}}</span>
+        <div class="chatroom-users-list">
+            <div *ngFor="let user of users" class="chatroom-users-list-item">
+                {{user.username}}
+            </div>
         </div>
     </div>
     <div class="chatroom-container">
